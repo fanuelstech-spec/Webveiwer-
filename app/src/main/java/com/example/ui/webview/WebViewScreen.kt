@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import kotlinx.coroutines.delay
+import androidx.browser.customtabs.CustomTabsIntent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -198,8 +199,8 @@ private fun setupWebView(webView: WebView, viewModel: WebViewViewModel, context:
 
             // Handle external domains
             if (AppConfig.EXTERNAL_DOMAINS.any { url.contains(it) }) {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(browserIntent)
+                val customTabsIntent = CustomTabsIntent.Builder().build()
+                customTabsIntent.launchUrl(context, Uri.parse(url))
                 return true
             }
 

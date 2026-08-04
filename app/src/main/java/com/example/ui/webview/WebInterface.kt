@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.webkit.JavascriptInterface
 import android.widget.Toast
+import com.example.MainActivity
 
 class WebInterface(
     private val context: Context,
@@ -30,5 +31,15 @@ class WebInterface(
     @JavascriptInterface
     fun scanQR() {
         onScanQR()
+    }
+
+    @JavascriptInterface
+    fun sendNotification(title: String, message: String) {
+        (context as? MainActivity)?.sendNativeNotification(title, message)
+    }
+
+    @JavascriptInterface
+    fun playMusic(url: String, title: String) {
+        (context as? MainActivity)?.playNativeMusic(url, title)
     }
 }

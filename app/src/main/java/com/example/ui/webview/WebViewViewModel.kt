@@ -12,12 +12,27 @@ data class WebViewState(
     val error: String? = null,
     val canGoBack: Boolean = false,
     val canGoForward: Boolean = false,
-    val isOffline: Boolean = false
+    val isOffline: Boolean = false,
+    val musicUrl: String? = null,
+    val musicTitle: String? = null,
+    val isPlaying: Boolean = false
 )
 
 class WebViewViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(WebViewState())
     val uiState = _uiState.asStateFlow()
+
+    fun playMusic(url: String, title: String) {
+        _uiState.update { it.copy(musicUrl = url, musicTitle = title, isPlaying = true) }
+    }
+
+    fun stopMusic() {
+        _uiState.update { it.copy(musicUrl = null, musicTitle = null, isPlaying = false) }
+    }
+
+    fun setPlaying(isPlaying: Boolean) {
+        _uiState.update { it.copy(isPlaying = isPlaying) }
+    }
 
     fun updateLoading(isLoading: Boolean) {
         _uiState.update { it.copy(isLoading = isLoading) }

@@ -1,7 +1,11 @@
 package com.example
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -14,6 +18,7 @@ import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
@@ -28,6 +33,11 @@ class MainActivity : FragmentActivity() {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var lastBackPressTime = 0L
 
+    companion object {
+        const val CHANNEL_ID = "webview_pro_notifications"
+        const val CHANNEL_NAME = "Web Notifications"
+    }
+
     private val fileChooserLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         filePathCallback?.onReceiveValue(uris.toTypedArray())
         filePathCallback = null
@@ -37,6 +47,8 @@ class MainActivity : FragmentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         
+        createNotificationChannel()
+
         if (AppConfig.PREVENT_SCREENSHOTS) {
             window.setFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE, android.view.WindowManager.LayoutParams.FLAG_SECURE)
         }
@@ -82,6 +94,36 @@ class MainActivity : FragmentActivity() {
     fun startQRScanner() {
         Toast.makeText(this, "QR Scanner triggered (Native Integration Ready)", Toast.LENGTH_SHORT).show()
         // Integration point for ML Kit or ZXing
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
+                description = "Notifications from the website"
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    fun sendNativeNotification(title: String, message: String) {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.welink_logo_1785800190811)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+    }
+
+    fun playNativeMusic(url: String, title: String) {
+        viewModel.playMusic(url, title)
+        Toast.makeText(this, "Playing music: $title", Toast.LENGTH_SHORT).show()
     }
 
     override fun onBackPressed() {

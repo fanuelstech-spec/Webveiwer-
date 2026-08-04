@@ -77,6 +77,8 @@ dependencies {
   implementation(libs.androidx.biometric)
   implementation(libs.androidx.webkit)
   implementation(libs.androidx.core.splashscreen)
+  implementation(libs.androidx.media3.exoplayer)
+  implementation(libs.androidx.media3.ui)
   // implementation(libs.accompanist.permissions)
   implementation(libs.androidx.activity.compose)
   // implementation(libs.androidx.camera.camera2)
